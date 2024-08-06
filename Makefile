@@ -11,7 +11,18 @@ build: ## Build executables
 test:
 test: ## Test rbtree implementation
 	$(MAKE) -C test test
-	
+
+driver:
+driver:
+	$(MAKE) -C src driver
+
+debug:
+debug: ## for vscode debug
+	$(MAKE) -C src clean
+	$(MAKE) -C test clean
+	$(MAKE) -C src
+	${MAKE} -C test debug
+
 clean:
 clean: ## Clear build environment
 	$(MAKE) -C src clean
