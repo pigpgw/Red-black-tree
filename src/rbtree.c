@@ -62,9 +62,63 @@ node_t *rbtree_insert(rbtree *t, const key_t key)
   return 0;
 }
 
-int rb_insert_fixup(rbtree *t,const node_t *z){
-  
-  return 0;
+void *left_rotate(const rbtree *t, const node_t *z)
+{
+  // TODO: implement find
+
+  return;
+}
+
+void *right_rotate(const rbtree *t, const node_t *z)
+{
+  // TODO: implement find
+
+  return;
+}
+
+void rb_insert_fixup(rbtree *t,const node_t *z){
+  node_t *y = (node_t *)malloc(sizeof(node_t));
+  while (z->parent->color == RBTREE_RED)
+  {
+    if (z->parent == z->parent->parent->left){
+      y = z->parent->parent->right;
+      if (y->color == RBTREE_RED){
+        z->parent->color = RBTREE_BLACK;
+        y->color = RBTREE_BLACK;
+        z->parent->parent->color = RBTREE_RED;
+        z = z->parent->parent;
+      } 
+      else {
+        if (z == z->parent->right){
+          z = z->parent;
+          left_rotate(t,z);
+        }
+        z->parent->color = RBTREE_BLACK;
+        z->parent->parent = RBTREE_RED;
+        right_rotate(t,z->parent->parent);
+      }
+    }
+    else {
+      y = z->parent->parent->left;
+      if (y->color == RBTREE_RED){
+        z->parent->color = RBTREE_BLACK;
+        y->color = RBTREE_BLACK;
+        z->parent->parent->color = RBTREE_BLACK;
+        z = z->parent->parent;
+      }
+      else {
+        if (z == z->parent->left){
+          z = z->parent;
+          right_rotate(t,z);
+        }
+        z->parent->color = RBTREE_BLACK;
+        z->parent->parent->color = RBTREE_RED;
+        left_rotate(t,z->parent->parent);
+      }
+    }
+  }
+  t->root->color = RBTREE_BLACK;
+  return;
 }
 
 node_t *rbtree_find(const rbtree *t, const key_t key)
