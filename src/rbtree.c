@@ -2,24 +2,28 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+void *left_rotate(rbtree *t, node_t *z);
+void *right_rotate(rbtree *t, node_t *z);
+
 rbtree *new_rbtree(void)
 {
-  rbtree *p = (rbtree *)calloc(1, sizeof(rbtree));
   // TODO: initialize struct if needed
+  rbtree *p = (rbtree *)calloc(1, sizeof(rbtree));
   if (p == NULL){
     return NULL;
   }
-  p->nil = (node_t *)malloc(sizeof(node_t));
+  p->nil = (node_t *)calloc(1,sizeof(node_t));
+  p->nil->color = RBTREE_BLACK;
+  p->root= p->nil;
+  if (p->root == NULL){
+    return NULL;
+  }
+
   if (p->nil == NULL){
     free(p);
     return NULL;
   }
 
-  p->nil->color = RBTREE_BLACK;
-  p->nil->parent = p->nil->left = p->nil->right = NULL;
-
-  p->root = p->nil;
-  p->nil = p->nil;
   printf("트리 생성");
   return p;
 }
@@ -33,13 +37,11 @@ void delete_rbtree(rbtree *t)
 node_t *rbtree_insert(rbtree *t, const key_t key)
 {
   // TODO: implement insert
+  if (t == NULL || t->root == NULL) return NULL;
   node_t *newNode = (node_t *)malloc(sizeof(node_t));
   if (newNode == NULL) return NULL;
 
-  newNode->color = RBTREE_RED;
   newNode->key = key;
-  newNode->left = t->nil;
-  newNode->right = t->nil;
 
   node_t *x = t->root;
   node_t *y = t->nil;
@@ -57,27 +59,61 @@ node_t *rbtree_insert(rbtree *t, const key_t key)
   if (y == t->nil) t->root = newNode;
   else if (newNode->key < y->key) y->left = newNode;
   else y->right = newNode;
-
+  
+  newNode->left = t->nil;
+  newNode->right = t->nil;
+  newNode->color = RBTREE_RED;
   rb_insert_fixup(t,newNode);
-  return 0;
+  return newNode;
 }
 
-void *left_rotate(const rbtree *t, const node_t *z)
+void *left_rotate(rbtree *t, node_t *z)
 {
   // TODO: implement find
-
+  node_t *y = z->right;
+  z->right = y->left;
+  if (y->left != t->nil){
+    y->left->parent = z;
+  }
+  y->parent = z->parent;
+  if (z->parent == t->nil){
+    t->root = y;
+  }
+  else if (z == z->parent->left){
+    z->parent->left = y;
+  }
+  else {
+    z->parent->right = y;
+  }
+  y->left = z;
+  z->parent = y;
   return;
 }
 
-void *right_rotate(const rbtree *t, const node_t *z)
-{
-  // TODO: implement find
 
-  return;
+void *right_rotate(rbtree *t, node_t *z)
+{
+  node_t *y = z->left;
+  z->left = y->right;
+  if (y->right != t->nil){
+    y->right->parent = z;
+  }
+  y->parent = z->parent;
+  if (z->parent == t->nil){
+    t->root = y;
+  }
+  else if (z == z->parent->right){
+    z->parent->right = y;
+  }
+  else {
+    z->parent->left = y;
+  }
+  y->right = z;
+  z->parent = y;
 }
 
-void rb_insert_fixup(rbtree *t,const node_t *z){
-  node_t *y = (node_t *)malloc(sizeof(node_t));
+void rb_insert_fixup(rbtree *t, node_t *z){
+  node_t *y;  
   while (z->parent->color == RBTREE_RED)
   {
     if (z->parent == z->parent->parent->left){
@@ -94,7 +130,7 @@ void rb_insert_fixup(rbtree *t,const node_t *z){
           left_rotate(t,z);
         }
         z->parent->color = RBTREE_BLACK;
-        z->parent->parent = RBTREE_RED;
+        z->parent->parent->color = RBTREE_RED; 
         right_rotate(t,z->parent->parent);
       }
     }
@@ -103,7 +139,7 @@ void rb_insert_fixup(rbtree *t,const node_t *z){
       if (y->color == RBTREE_RED){
         z->parent->color = RBTREE_BLACK;
         y->color = RBTREE_BLACK;
-        z->parent->parent->color = RBTREE_BLACK;
+        z->parent->parent->color = RBTREE_RED; 
         z = z->parent->parent;
       }
       else {
@@ -118,7 +154,6 @@ void rb_insert_fixup(rbtree *t,const node_t *z){
     }
   }
   t->root->color = RBTREE_BLACK;
-  return;
 }
 
 node_t *rbtree_find(const rbtree *t, const key_t key)

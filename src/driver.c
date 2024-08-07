@@ -9,7 +9,7 @@ int main(int argc, char *argv[]) {
     rbtree_insert(t,7);
     rbtree_insert(t,5);
     rbtree_insert(t,8);
-    rbtree_insert(t,4);
     rbtree_insert(t,15);
+    rbtree_insert(t,4);
     return 0;
 }
