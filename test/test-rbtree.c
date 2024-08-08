@@ -25,7 +25,7 @@ void test_insert_single(const key_t key) {
   assert(t->root == p);
   assert(p->key == key);
   // assert(p->color == RBTREE_BLACK);  // color of root node should be black
-#ifdef SENTINEL
+#ifdef SENTINELinsert_arr
   assert(p->left == t->nil);
   assert(p->right == t->nil);
   assert(p->parent == t->nil);
@@ -370,10 +370,10 @@ void test_find_erase_rand(const size_t n, const unsigned int seed) {
 int main(void) {
   test_init();
   test_insert_single(1024);
-  // test_find_single(512, 1024);
-  // test_erase_root(128);
-  // test_find_erase_fixed();
-  // test_minmax_suite();
+   (512, 1024);
+  test_erase_root(128);
+  test_find_erase_fixed();
+  test_minmax_suite();
   // test_to_array_suite();
   // test_distinct_values();
   // test_duplicate_values();

@@ -11,5 +11,7 @@ int main(int argc, char *argv[]) {
     rbtree_insert(t,8);
     rbtree_insert(t,15);
     rbtree_insert(t,4);
+    node_t *test_node = t->root->left->right;
+    rbtree_erase(t,test_node);
     return 0;
-}
+} 
